@@ -1,0 +1,37 @@
+from sqlalchemy import create_engine,text
+from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+print(f"Connecting to database at: {DATABASE_URL}")
+
+engine = create_engine(DATABASE_URL)
+
+try:
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+        print("Database connected successfully!")
+except Exception as e:
+    print("Connection failed:")
+    print(e)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+Base = declarative_base()
+
+
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
