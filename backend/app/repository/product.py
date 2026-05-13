@@ -21,3 +21,18 @@ class ProductRepository:
     @staticmethod
     def get_by_id(db: Session, product_id: int):
         return db.query(Product).filter(Product.id == product_id).first()
+    
+    @staticmethod
+    def update(db: Session, product_id: int, update_data: dict):
+        product = db.query(Product).filter(Product.id == product_id).first()
+
+        if not product:
+            return None
+
+        for key, value in update_data.items():
+            setattr(product, key, value)
+
+        db.commit()
+        db.refresh(product)
+
+        return product
