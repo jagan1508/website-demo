@@ -22,3 +22,7 @@ class ProductService:
 
         return ProductRepository.update(db, product_id, update_data.dict(exclude_unset=True))
     
+    @staticmethod
+    def delete_product(db: Session, product_id: int):
+        return ProductRepository.delete(db, product_id)
+    

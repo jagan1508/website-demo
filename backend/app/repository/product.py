@@ -36,3 +36,15 @@ class ProductRepository:
         db.refresh(product)
 
         return product
+    
+    @staticmethod
+    def delete(db: Session, product_id: int):
+        product = db.query(Product).filter(Product.id == product_id).first()
+
+        if not product:
+            return None
+
+        db.delete(product)
+        db.commit()
+
+        return product

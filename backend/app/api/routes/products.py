@@ -46,3 +46,18 @@ def update_product(
             detail="Product not found"
         )
     return updated_product
+
+@router.delete("/{product_id}")
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db)
+):
+    deleted_product = ProductService.delete_product(db, product_id)
+
+    if not deleted_product:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
+
+    return {"detail": "Product deleted successfully"}
