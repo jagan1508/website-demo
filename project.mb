@@ -1,0 +1,75 @@
+Project: website-demo
+
+Summary:
+- A small web application repository with a FastAPI backend for an art store API.
+- Backend exposes REST endpoints for `products` and `categories`.
+- Uses SQLAlchemy ORM with an SQLite/PostgreSQL-style database configured by `DATABASE_URL` from `.env`.
+- The frontend folder exists but is not detailed in this summary; the backend is the currently implemented core.
+
+Backend Architecture:
+- `backend/app/main.py`: app entrypoint. Creates database tables on startup and mounts API routers.
+- `backend/app/api/router.py`: central router that includes `products` and `categories` subrouters.
+- `backend/app/api/routes/products.py`: product CRUD endpoints.
+- `backend/app/api/routes/categories.py`: category read/create endpoints.
+
+Data Model Layer:
+- `backend/app/models/product.py`: SQLAlchemy `Product` model with fields `id`, `title`, `description`, `price`, `image_url`, `stock`, `category_id`.
+- `backend/app/models/category.py`: SQLAlchemy `Category` model with fields `id`, `name`.
+
+Database Core:
+- `backend/app/core/database.py`: SQLAlchemy engine and session factory.
+- `get_db()` dependency yields a DB session for FastAPI endpoints.
+- The module loads environment variables with `dotenv` and prints connection diagnostics.
+
+Repository Layer:
+- `backend/app/repository/product.py`: repository methods for creating, listing, fetching, updating, deleting `Product` records.
+- `backend/app/repository/category.py`: repository methods for creating, listing, fetching `Category` records.
+
+Service Layer:
+- `backend/app/services/product.py`: service functions wrap repository calls and convert Pydantic input.
+- `backend/app/services/category.py`: service functions wrap category repository calls.
+
+Schema Layer:
+- `backend/app/schemas/product.py`: Pydantic schemas `ProductCreate`, `ProductResponse`, `ProductUpdate`.
+- `backend/app/schemas/category.py`: Pydantic schemas `CategoryCreate`, `CategoryResponse`.
+
+API Behavior:
+- `POST /products/`: create a new product.
+- `GET /products/`: list all products.
+- `GET /products/{product_id}`: get a product by id.
+- `PUT /products/{product_id}`: update a product by id.
+- `DELETE /products/{product_id}`: delete a product by id.
+- `POST /categories/`: create a new category.
+- `GET /categories/`: list all categories.
+- `GET /categories/{category_id}`: get a category by id.
+
+Implementation Notes:
+- The project follows a layered design: routes -> services -> repositories -> models.
+- `CategoryResponse` and `ProductResponse` use `Config.from_attributes = True` to serialize SQLAlchemy model instances.
+- There is no explicit foreign-key relationship loading for products/categories beyond `category_id`.
+
+How to use:
+- Set `DATABASE_URL` in the environment or `.env` file.
+- Start the backend with a FastAPI server (e.g. `uvicorn backend.app.main:app --reload`).
+- Database tables are created automatically at startup via `Base.metadata.create_all(bind=engine)`.
+
+Key Files:
+- `backend/app/main.py`
+- `backend/app/core/database.py`
+- `backend/app/api/router.py`
+- `backend/app/api/routes/products.py`
+- `backend/app/api/routes/categories.py`
+- `backend/app/models/product.py`
+- `backend/app/models/category.py`
+- `backend/app/schemas/product.py`
+- `backend/app/schemas/category.py`
+- `backend/app/repository/product.py`
+- `backend/app/repository/category.py`
+- `backend/app/services/product.py`
+- `backend/app/services/category.py`
+
+Potential Next Steps for an LLM:
+- Implement frontend integration using the existing API endpoints.
+- Add category validation or product-category relationship loading.
+- Enhance error handling and response consistency.
+- Add missing frontend or documentation for the `frontend/` folder.

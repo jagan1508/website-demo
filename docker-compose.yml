@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:16
@@ -11,11 +9,24 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: art_store
 
-    ports:
-      - "543:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  
+  backend:
+    image: art-shop-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  seller-frontend:
+    image: art-store-seller-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+
+
 
 volumes:
   postgres_data:
