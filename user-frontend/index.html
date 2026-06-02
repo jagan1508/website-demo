@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Shop — User Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-family: 'Inter', system-ui, sans-serif; scroll-behavior: smooth; }
+body { background: #f4ede0; color: #3c3a35; min-height: 100vh; }
+img { max-width: 100%; display: block; }
+button, input { font: inherit; }
+button { border: none; cursor: pointer; }
+
+:root {
+  --bg: #f4ede0;
+  --surface: #f0e7d8;
+  --panel: #e8ddcc;
+  --panel-strong: #d9c8b3;
+  --border: #cec1b0;
+  --text: #3c3a35;
+  --text-muted: #6b655d;
+  --text-soft: #8b847b;
+  --accent: #84715f;
+  --accent-soft: #a58f78;
+  --shadow: 0 18px 40px rgba(92,80,65,0.08);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --transition: 180ms ease;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.page-shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  background: rgba(232,221,204,0.9);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.6rem;
+}
+
+.logo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo em { font-style: normal; color: var(--accent); }
+
+.topbar-summary {
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 38rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.search-field {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+}
+
+.search-field svg { color: var(--accent-soft); width: 18px; height: 18px; }
+
+.search-field input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  outline: none;
+}
+
+.filter-pill {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.72rem 1rem;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition), border-color var(--transition);
+}
+
+.filter-pill.active,
+.filter-pill:hover {
+  background: var(--panel-strong);
+  border-color: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.hero-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.hero-card h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  margin-bottom: 0.8rem;
+  line-height: 1.05;
+}
+
+.hero-card p {
+  color: var(--text-muted);
+  margin-bottom: 1.4rem;
+  line-height: 1.75;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  border-radius: 999px;
+  padding: 0.95rem 1.5rem;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 30px rgba(132,113,95,0.16); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover { background: var(--panel-strong); }
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-heading h2 {
+  font-size: 1.3rem;
+  letter-spacing: 0.04em;
+}
+
+.section-heading p {
+  color: var(--text-soft);
+  font-size: 0.95rem;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.product-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), border-color var(--transition);
+}
+
+.product-card:hover { transform: translateY(-4px); border-color: var(--accent-soft); }
+
+.product-card .image-wrap {
+  background: #efebe3;
+  min-height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-card .image-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.32), transparent 42%);
+}
+
+.product-card .details {
+  padding: 1.25rem 1.35rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.product-card .details h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  margin-bottom: 0.2rem;
+}
+
+.product-card .details .meta {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.product-card .details .price-stock {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: auto;
+}
+
+.product-card .price {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.product-card .stock {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+.empty-state {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 1.6rem;
+  text-align: center;
+}
+
+.empty-state strong {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .topbar { padding: 1rem; }
+}
+
+@media (max-width: 640px) {
+  .page-shell { padding: 1rem 1rem 3rem; }
+  .products-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page-shell">
+  <section class="topbar">
+    <div>
+      <a class="logo" href="#">Art <em>Shop</em></a>
+      <p class="topbar-summary">Browse curated artworks.</p>
+    </div>
+    <div class="controls">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7"/><path d="M16.65 16.65L21 21" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="searchInput" type="search" placeholder="Search artworks..." oninput="updateSearch(this.value)">
+      </div>
+      <button class="btn-secondary" onclick="scrollToProducts()">Browse Gallery</button>
+    </div>
+  </section>
+
+  <div class="hero">
+    <article class="hero-card">
+      <h1>My gallery for elegant artwork discovery.</h1>
+      <p>Discover available products from my Art Shop. The collection is designed for browsing and finding my works.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToProducts()">View artworks</button>
+        <button class="btn-secondary" onclick="resetFilters()">Reset filters</button>
+      </div>
+    </article>
+    <article class="hero-card">
+      <div class="section-heading">
+        <div>
+          <h2>Categories</h2>
+          <p>Filter by category to narrow the gallery.</p>
+        </div>
+      </div>
+      <div id="categoryList" class="controls" style="flex-wrap: wrap; gap: 0.75rem;"></div>
+    </article>
+  </div>
+
+  <section>
+    <div class="section-heading">
+      <div>
+        <h2>Gallery</h2>
+        <p id="galleryStatus">Loading artwork collection…</p>
+      </div>
+    </div>
+
+    <div id="productsGrid" class="products-grid"></div>
+  </section>
+</div>
+
+<script>
+const API_BASE = localStorage.getItem('api_base')?.replace(/\/$/, '') || 'http://localhost:8000';
+let products = [];
+let categories = [];
+let activeCategory = 'all';
+let searchTerm = '';
+
+function apiFetch(path, options = {}) {
+  return fetch(API_BASE + path, {
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+    ...options,
+  }).then(async res => {
+    if (!res.ok) {
+      const data = await res.text();
+      throw new Error(data || res.statusText);
+    }
+    return res.status === 204 ? null : res.json();
+  });
+}
+
+function updateSearch(value) {
+  searchTerm = value.trim().toLowerCase();
+  renderProducts();
+}
+
+function resetFilters() {
+  activeCategory = 'all';
+  searchTerm = '';
+  document.getElementById('searchInput').value = '';
+  renderCategoryButtons();
+  renderProducts();
+}
+
+function scrollToProducts() {
+  document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setStatus(text) {
+  document.getElementById('galleryStatus').textContent = text;
+}
+
+function formatPrice(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'INR' }).format(value);
+}
+
+function filterProducts() {
+  return products.filter(item => {
+    const matchesCategory = activeCategory === 'all' || item.category_id === activeCategory;
+    const matchesSearch = !searchTerm || item.title.toLowerCase().includes(searchTerm) || (item.description || '').toLowerCase().includes(searchTerm);
+    return matchesCategory && matchesSearch;
+  });
+}
+
+function renderCategoryButtons() {
+  const container = document.getElementById('categoryList');
+  container.innerHTML = '';
+  const allButton = document.createElement('button');
+  allButton.className = 'filter-pill' + (activeCategory === 'all' ? ' active' : '');
+  allButton.textContent = 'All';
+  allButton.onclick = () => { activeCategory = 'all'; renderCategoryButtons(); renderProducts(); };
+  container.appendChild(allButton);
+
+  categories.forEach(category => {
+    const button = document.createElement('button');
+    button.className = 'filter-pill' + (activeCategory === category.id ? ' active' : '');
+    button.textContent = category.name;
+    button.onclick = () => { activeCategory = category.id; renderCategoryButtons(); renderProducts(); };
+    container.appendChild(button);
+  });
+}
+
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  const visible = filterProducts();
+
+  if (!visible.length) {
+    setStatus('No artwork matches the current filters.');
+    grid.innerHTML = `<div class="empty-state"><strong>No items found</strong><span>Try a broader category or remove the search term.</span></div>`;
+    return;
+  }
+
+  setStatus(`${visible.length} artwork${visible.length === 1 ? '' : 's'} available`);
+
+  grid.innerHTML = visible.map(product => {
+    const imageContent = product.image_url
+      ? `<img src="${product.image_url}" alt="${escapeHtml(product.title)}">`
+      : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:${'var(--text-soft)'};">No image</div>`;
+
+    const stockLabel = product.stock > 0 ? `${product.stock} in stock` : 'Out of stock';
+    return `
+      <article class="product-card">
+        <div class="image-wrap">${imageContent}</div>
+        <div class="details">
+          <div class="meta">${product.category_id ? getCategoryName(product.category_id) : 'Uncategorized'}</div>
+          <h3>${escapeHtml(product.title)}</h3>
+          <div>${escapeHtml(product.description || 'No description available.')}</div>
+          <div class="price-stock">
+            <span class="price">${formatPrice(product.price)}</span>
+            <span class="stock">${stockLabel}</span>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+}
+
+function getCategoryName(id) {
+  const category = categories.find(item => item.id === id);
+  return category ? category.name : 'Category';
+}
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"]+/g, char => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[char]);
+}
+
+function loadData() {
+  Promise.all([
+    apiFetch('/products/'),
+    apiFetch('/categories/')
+  ]).then(([productData, categoryData]) => {
+    products = Array.isArray(productData) ? productData : [];
+    categories = Array.isArray(categoryData) ? categoryData : [];
+    renderCategoryButtons();
+    renderProducts();
+  }).catch(error => {
+    setStatus('Unable to load content.');
+    document.getElementById('productsGrid').innerHTML = `<div class="empty-state"><strong>Connection error</strong><span>${escapeHtml(error.message)}</span></div>`;
+  });
+}
+
+loadData();
+</script>
+</body>
+</html>

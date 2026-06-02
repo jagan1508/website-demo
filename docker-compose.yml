@@ -24,6 +24,12 @@ services:
       - "3000:80"
     depends_on:
       - backend
+  buyer-frontend:
+    image: art-store-user-ui
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
 
 
 
