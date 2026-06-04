@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seller-frontend
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: seller-frontend
+  template:
+    metadata:
+      labels:
+        app: seller-frontend
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: seller-frontend
+          image: art-store-seller-ui
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: seller-frontend-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: seller-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30001
+  type: NodePort

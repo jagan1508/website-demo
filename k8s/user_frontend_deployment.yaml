@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-frontend
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-frontend
+  template:
+    metadata:
+      labels:
+        app: user-frontend
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: user-frontend
+          image: art-store-user-ui
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: user-frontend-service
+  namespace: ecommerce
+spec:
+  selector:
+    app: user-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30002
+  type: NodePort
