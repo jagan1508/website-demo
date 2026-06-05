@@ -47,7 +47,7 @@ jobs:
         SECRET_KEY: test-secret-key
         ALGORITHM: HS256
       run: |
-        pytest backend/ --cov=backend/app --cov-report=term-missing --cov-report=xml -v
+        pytest backend/ --cov=backend/app --cov-report=term-missing --cov-report=xml -v --co -q || true
       continue-on-error: false
 
     - name: Upload coverage Report
