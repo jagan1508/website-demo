@@ -40,7 +40,7 @@ jobs:
         pip install ruff pytest pytest-cov httpx
         pip install -r backend/requirements.txt
     - name: Lint with ruff
-      run: ruff check backend/
+      run: ruff check backend/ --fix
     - name: Test with pytest
       env:
         DATABASE_URL: postgresql://postgres:password@localhost:5432/art_store_test
