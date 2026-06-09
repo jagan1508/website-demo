@@ -74,7 +74,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: Login to Docker Hub
+      - name: Login to GHDR
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
@@ -128,6 +128,33 @@ jobs:
             ${{ env.IMAGE_PREFIX }}/art-shop-user-ui:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  update-tags:
+    runs-on: ubuntu-latest
+    needs: docker-and-push
+    if: github.event_name=='push' && github.ref == 'refs/heads/main'
+    permissions: 
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update image tags in k8s manifests
+        env:
+          IMAGE_TAG: ${{ needs.docker-and-push.outputs.image_tag }}
+        run: |
+          sed -i "s|art-shop-backend:.*|${{ env.IMAGE_PREFIX }}/art-shop-backend:${IMAGE_TAG}|g" k8s/backend_deployment.yaml
+          sed -i "s|art-shop-seller-ui:.*|${{ env.IMAGE_PREFIX }}/art-shop-seller-ui:${IMAGE_TAG}|g" k8s/seller_frontend_deployment.yaml
+          sed -i "s|art-shop-user-ui:.*|${{ env.IMAGE_PREFIX }}/art-shop-user-ui:${IMAGE_TAG}|g" k8s/user_frontend_deployment.yaml
+
+      - name: Commit and push updated manifests
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/
+          git diff --staged --quiet || git commit -m "ci: update image tags to ${IMAGE_TAG}"
+          git push
+    
 
 
 
