@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: seller-frontend
-  namespace: ecommerce
+  namespace: ecommerce-1
 spec:
   replicas: 1
   selector:
@@ -32,7 +32,7 @@ apiVersion: v1
 kind: Service 
 metadata:
   name: seller-frontend-service
-  namespace: ecommerce
+  namespace: ecommerce-1
 spec:
   selector:
     app: seller-frontend
