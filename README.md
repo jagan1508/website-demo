@@ -284,13 +284,6 @@ The sync policy is automated:
 
 This makes Git the source of truth for the deployed environment.
 
-## Environment Configuration
-
-The backend expects:
-
-```text
-DATABASE_URL=postgresql://postgres:password@db:5432/art_store
-```
 
 For production-style environments, move database credentials into Kubernetes Secrets or an external secret manager.
 
@@ -305,16 +298,6 @@ For production-style environments, move database credentials into Kubernetes Sec
 - Persistent database storage with a PVC
 - Separate services for frontend, backend, and database responsibilities
 
-## Production Hardening Roadmap
-
-- Replace hard-coded database credentials with Kubernetes Secrets
-- Add readiness and liveness probes to application Deployments
-- Use a StatefulSet for PostgreSQL instead of a multi-replica Deployment
-- Add Alembic migrations for controlled schema changes
-- Add Ingress with TLS for clean external access
-- Add centralized logging and metrics
-- Add frontend integration tests and backend route tests
-- Align all runtime environment variable names across Compose, Kubernetes, and application code
 
 ## License
 
